@@ -27,7 +27,7 @@
 #'                          byrow = TRUE)),
 #'                 diag(x = 1, nrow = 3, ncol = 3),
 #'                 1000)
-create_var <-function(coefficient_matrices, Sigma_a, n, seed = 56143868){
+create_var <- function(coefficient_matrices, Sigma_a, n, seed = 56143868){
 
   K = dim(coefficient_matrices[[1]])[1]
   H = length(coefficient_matrices) - 1
@@ -60,13 +60,13 @@ create_var <-function(coefficient_matrices, Sigma_a, n, seed = 56143868){
   a = MASS::mvrnorm(n = n + burn_ins, mu = rep(0, K), Sigma_a)
   z = matrix(0, nrow = n + burn_ins, ncol = K)
 
-  for (t in H:(n+burn_ins)) {
+  for (t in (H+1):(n+burn_ins)) {
 
     z[t, ] <- t(coefficient_matrices[[1]])
 
-    for (h in 1:(H)) {
+    for (h in 1:H) {
 
-      z[t, ] <- z[t, ] + z[t - h, ] %*% coefficient_matrices[[h + 1]]
+      z[t, ] <- z[t, ] + z[t-h, ] %*% coefficient_matrices[[h+1]]
 
     }
 
