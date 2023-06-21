@@ -4,7 +4,7 @@
 \alias{create_var}
 \title{Create a multivariate time series from a VAR}
 \usage{
-create_var(x)
+create_var(coefficient_matrices, Sigma_a, n, seed = 56143868)
 }
 \arguments{
 \item{x}{Some sort of input}
