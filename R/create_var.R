@@ -42,7 +42,7 @@ create_var <- function(coefficient_matrices, Sigma_a, n, seed = 56143868){
 
   # Check if they're all a K by K matrix
   for (h in 2:(H+1)) {
-    if (isFALSE(dim(coefficient_matrices[[1]]) == K)) {
+    if (isFALSE(all(dim(coefficient_matrices[[h]]) == K))) {
       stop(paste0("phi_", h-1, " is not a ", K, " by ", K, ' matrix.',  sep = ""))
     }
   }
@@ -56,11 +56,10 @@ create_var <- function(coefficient_matrices, Sigma_a, n, seed = 56143868){
   }
 
   burn_ins = min(round(n/2), 500)
-
   a = MASS::mvrnorm(n = n + burn_ins, mu = rep(0, K), Sigma_a)
   z = matrix(0, nrow = n + burn_ins, ncol = K)
 
-  for (t in (H+1):(n+burn_ins)) {
+  for (t in (H+1):(n + burn_ins)) {
 
     z[t, ] <- t(coefficient_matrices[[1]])
 
@@ -74,8 +73,8 @@ create_var <- function(coefficient_matrices, Sigma_a, n, seed = 56143868){
 
   }
 
-  a <- a[(burn_ins+1):(burn_ins+n), ]
-  z <- z[(burn_ins+1):(burn_ins+n), ]
+  a <- tail(a, n)
+  z <- tail(z, n)
 
   return(list(K = K,
               H = H,
