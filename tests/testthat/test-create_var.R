@@ -1,3 +1,21 @@
-test_that("My test thing works", {
-  expect_equal(create_var("F"), "F")
+test_that("Check first element is a column vector", {
+    expect_error(create_var(list(matrix(c(1, 0.5, 0.25, 2),
+                                        nrow = 2,
+                                        ncol = 2,
+                                        byrow = TRUE),
+                                 matrix(c(0.2, 0, 0.1,
+                                          -0.3, 0, 0,
+                                          0, 0, -0.1),
+                                        nrow = 3,
+                                        ncol = 3,
+                                        byrow = TRUE),
+                                 matrix(c(0, 0.3, 0,
+                                          0, 0, 0,
+                                          0, 0, 0.1),
+                                        nrow = 3,
+                                        ncol = 3,
+                                        byrow = TRUE)),
+                            diag(x = 1, nrow = 3, ncol = 3),
+                            1000),
+                 c("phi_0 is not a column vector."))
 })

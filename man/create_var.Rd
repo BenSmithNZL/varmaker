@@ -7,14 +7,37 @@
 create_var(coefficient_matrices, Sigma_a, n, seed = 56143868)
 }
 \arguments{
-\item{x}{Some sort of input}
+\item{coefficient_matrices}{A list of the coefficient matrices}
+
+\item{Sigma_a}{Covariance matrix of the innovations}
+
+\item{n}{Number of periods}
+
+\item{seed}{Seed for the random generation of the innovations}
 }
 \value{
-A character string
+A list
 }
 \description{
 Create a multivariate time series from a VAR
 }
 \examples{
-create_var("Hello")
+create_var(list(matrix(c(1, 0.5, 0.25),
+                         nrow = 3,
+                         ncol = 1,
+                         byrow = TRUE),
+                matrix(c(0.2, 0, 0.1,
+                        -0.3, 0, 0,
+                         0, 0, -0.1),
+                         nrow = 3,
+                         ncol = 3,
+                         byrow = TRUE),
+                matrix(c(0, 0.3, 0,
+                         0, 0, 0,
+                         0, 0, 0.1),
+                         nrow = 3,
+                         ncol = 3,
+                         byrow = TRUE)),
+                diag(x = 1, nrow = 3, ncol = 3),
+                1000)
 }
