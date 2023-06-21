@@ -48,10 +48,7 @@ create_var <- function(coefficient_matrices, Sigma_a, n, seed = 56143868){
   }
 
   # Check if sigma is a K by K matrix
-  if (dim(Sigma_a)[1] != K) {
-    stop("Sigma is not a K by K matrix.")
-  }
-  if (dim(Sigma_a)[2] != K) {
+  if (isFALSE(all(dim(Sigma_a) == K))) {
     stop("Sigma is not a K by K matrix.")
   }
 
