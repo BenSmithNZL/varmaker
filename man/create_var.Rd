@@ -7,25 +7,22 @@
 create_var(coefficient_matrices, Sigma_a, n, seed = 56143868)
 }
 \arguments{
-\item{coefficient_matrices}{A list of the coefficient matrices}
+\item{coefficient_matrices}{A list of the coefficient matrices. The first element of the list must be a K-length vector, all following elements must be K-by-K matrices.}
 
-\item{Sigma_a}{Covariance matrix of the innovations}
+\item{Sigma_a}{A K-by-K covariance matrix of the innovations.}
 
-\item{n}{Number of periods}
+\item{n}{An integer of the number of periods.}
 
-\item{seed}{Seed for the random generation of the innovations}
+\item{seed}{Seed for the random generation of the innovations. Seed is equal to 56143868 by default.}
 }
 \value{
-A list
+\code{create_var} returns a \code{\link[=list]{list()}} object
 }
 \description{
 Create a multivariate time series from a VAR
 }
 \examples{
-create_var(list(matrix(c(1, 0.5, 0.25),
-                         nrow = 3,
-                         ncol = 1,
-                         byrow = TRUE),
+create_var(list(c(1, 0.5, 0.25),
                 matrix(c(0.2, 0, 0.1,
                         -0.3, 0, 0,
                          0, 0, -0.1),
