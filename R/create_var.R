@@ -73,8 +73,17 @@ create_var <- function(coefficient_matrices, Sigma_a, n, seed = 56143868){
   a <- tail(a, n)
   z <- tail(z, n)
 
-  return(list(K = K,
+  ## Creating the coefficient matrix beta
+  beta = t(coefficient_matrices[[1]])
+
+  for (h in 1:H) {
+    beta = rbind(beta, coefficient_matrices[[h+1]])
+  }
+
+  ## Return output
+  return(list(a = a,
+              beta = beta,
+              K = K,
               H = H,
-              a = a,
               z = z))
 }
