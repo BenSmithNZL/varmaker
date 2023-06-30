@@ -70,8 +70,8 @@ create_var <- function(coefficient_matrices, Sigma_a, n, seed = 56143868){
 
   }
 
-  a <- tail(a, n)
-  z <- tail(z, n)
+  a <- utils::tail(a, n)
+  z <- utils::tail(z, n)
 
   ## Creating the coefficient matrix beta
   beta = t(coefficient_matrices[[1]])
