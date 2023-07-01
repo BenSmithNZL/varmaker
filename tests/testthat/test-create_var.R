@@ -1,7 +1,7 @@
 test_that("Check that first element is a column vector", {
     expect_error(
-      create_var(
-        list(2,
+        create_var(
+          list(2,
              matrix(c(0.2, 0, 0.1,
                       -0.3, 0, 0,
                       0, 0, -0.1),
@@ -35,5 +35,45 @@ test_that("Check that all the other coefficient matricies are K by K.", {
                           diag(x = 1, nrow = 3, ncol = 3),
                           1000),
                c("phi_1 is not a 3 by 3 matrix."))
+  expect_error(create_var(list(c(1, 0.5, 0.25),
+                               matrix(c(0.2, 0, 0.1,
+                                        -0.3, 0, 0,
+                                        0, 0, -0.1),
+                                      nrow = 3,
+                                      ncol = 3,
+                                      byrow = T),
+                               matrix(c(0, 0.3,
+                                        0, 0,
+                                        0, 0),
+                                      nrow = 3,
+                                      ncol = 2,
+                                      byrow = T)),
+                          diag(x = 1, nrow = 3, ncol = 3),
+                          1000),
+               c("phi_2 is not a 3 by 3 matrix."))
+})
+
+test_that("Check Sigma_a is symmetric", {
+  expect_error(create_var(list(c(1, 0.5, 0.25),
+                               matrix(c(0.2, 0, 0.1,
+                                        -0.3, 0, 0,
+                                        0, 0, -0.1),
+                                      nrow = 3,
+                                      ncol = 3,
+                                      byrow = TRUE),
+                               matrix(c(0, 0.3, 0,
+                                        0, 0, 0,
+                                        0, 0, 0.1),
+                                      nrow = 3,
+                                      ncol = 3,
+                                      byrow = TRUE)),
+                          matrix(c(1.25, 1, 0,
+                                   0, 1, 0,
+                                   0, 0, 0.5),
+                                 nrow = 3,
+                                 ncol = 3,
+                                 byrow = TRUE),
+                          1000),
+               c("Sigma_a is not a symmetric matrix"))
 })
 

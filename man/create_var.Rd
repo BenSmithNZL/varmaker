@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_var.R
 \name{create_var}
 \alias{create_var}
-\title{Create a multivariate time series from a VAR}
+\title{Simulate observations from a VAR.}
 \usage{
 create_var(coefficient_matrices, Sigma_a, n, seed = 56143868)
 }
@@ -16,10 +16,21 @@ create_var(coefficient_matrices, Sigma_a, n, seed = 56143868)
 \item{seed}{Seed for the random generation of the innovations. Seed is equal to 56143868 by default.}
 }
 \value{
-\code{create_var} returns a \code{\link[=list]{list()}} object
+\code{create_var} returns a \code{\link[=list]{list()}} object.
+\itemize{
+\item \code{a} is a matrix of the innovations.
+\item \code{autocovariance} is a list of the autocovariances.
+\item \code{beta} is the matrix of coefficients.
+\item \code{companion_matrix} is the coefficients in companion matrix form.
+\item \code{H} is an integer for the number of lags in the VAR.
+\item \code{K} is an integer for the number of time series.
+\item \code{mu} is the theoretical mean of the process.
+\item \code{n} is the number of periods.
+\item \code{z} is the process itself.
+}
 }
 \description{
-Create a multivariate time series from a VAR
+Creates observations from the canonical VAR.
 }
 \examples{
 create_var(list(c(1, 0.5, 0.25),
@@ -35,6 +46,14 @@ create_var(list(c(1, 0.5, 0.25),
                          nrow = 3,
                          ncol = 3,
                          byrow = TRUE)),
-                diag(x = 1, nrow = 3, ncol = 3),
-                1000)
+           matrix(c(1.25, 0, 0,
+                    0, 1, 0,
+                    0, 0, 0.5),
+                    nrow = 3,
+                    ncol = 3,
+                    byrow = TRUE),
+           1000)
+}
+\references{
+Lütkepohl, H. (2005) \emph{New Introduction to Multiple Time Series Analysis.} Springer.
 }
