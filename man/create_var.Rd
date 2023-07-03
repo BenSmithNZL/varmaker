@@ -7,30 +7,39 @@
 create_var(coefficient_matrices, Sigma_a, n, seed = 56143868)
 }
 \arguments{
-\item{coefficient_matrices}{A list of the coefficient matrices. The first element of the list must be a K-length vector, all following elements must be K-by-K matrices.}
+\item{coefficient_matrices}{A list of the coefficient matrices. The first element of the list corresponds to
+\eqn{\phi_0}, and must be a K-length vector. All following elements must be K-by-K matrices, with the second element corresponding to
+\eqn{\phi_1}, the third to \eqn{\phi_2}, and so on. Only \eqn{\phi_0} is required; all further coefficient matrices are optional.}
 
-\item{Sigma_a}{A K-by-K covariance matrix of the innovations.}
+\item{Sigma_a}{A K-by-K covariance matrix of the innovations. Must be symmetrical.}
 
 \item{n}{An integer of the number of periods.}
 
 \item{seed}{Seed for the random generation of the innovations. Seed is equal to 56143868 by default.}
 }
 \value{
-\code{create_var} returns a \code{\link[=list]{list()}} object.
+\code{create_var} returns a \code{\link[=list]{list()}} object with the following elements:
 \itemize{
-\item \code{a} is a matrix of the innovations.
+\item \code{a} is a n-by-K matrix of the innovations.
 \item \code{autocovariance} is a list of the autocovariances.
 \item \code{beta} is the matrix of coefficients.
+\item \code{burn_ins} is the number of burn-in observations used.
 \item \code{companion_matrix} is the coefficients in companion matrix form.
+\item \code{eigens} is list containing the eigenvalues and the moduli of the companion matrix.
 \item \code{H} is an integer for the number of lags in the VAR.
 \item \code{K} is an integer for the number of time series.
-\item \code{mu} is the theoretical mean of the process.
+\item \code{mu} is K-vector of the theoretical mean of the process.
 \item \code{n} is the number of periods.
+\item \code{stable} logical. If \code{TRUE} then the process is stable.
 \item \code{z} is the process itself.
 }
 }
 \description{
-Creates observations from the canonical VAR.
+Creates observations from the canonical VAR. \deqn{z_t = \phi_0 + \phi_1 z_{t-1} + \ldots + \phi_h z_{t-h} + a_t}
+where \eqn{a_t \sim N(0, \Sigma_a)}
+}
+\details{
+There are a certain number of burn-ins that are used.
 }
 \examples{
 create_var(list(c(1, 0.5, 0.25),

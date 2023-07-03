@@ -77,3 +77,27 @@ test_that("Check Sigma_a is symmetric", {
                c("Sigma_a is not a symmetric matrix"))
 })
 
+test_that("Check n is an integer", {
+  expect_error(create_var(list(c(1, 0.5, 0.25),
+                               matrix(c(0.2, 0, 0.1,
+                                        -0.3, 0, 0,
+                                        0, 0, -0.1),
+                                      nrow = 3,
+                                      ncol = 3,
+                                      byrow = TRUE),
+                               matrix(c(0, 0.3, 0,
+                                        0, 0, 0,
+                                        0, 0, 0.1),
+                                      nrow = 3,
+                                      ncol = 3,
+                                      byrow = TRUE)),
+                          matrix(c(1.25, 0, 0,
+                                   0, 1, 0,
+                                   0, 0, 0.5),
+                                 nrow = 3,
+                                 ncol = 3,
+                                 byrow = TRUE),
+                          '1000'),
+               c("n must be an integer."))
+})
+
