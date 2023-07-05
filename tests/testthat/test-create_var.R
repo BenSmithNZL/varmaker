@@ -101,3 +101,64 @@ test_that("Check n is an integer", {
                c("n must be an integer."))
 })
 
+cm_1 <- list(c(0, 0),
+             matrix(c(0.5, 0.1,
+                      0.4, 0.5),
+                    nrow = 2,
+                    ncol = 2,
+                    byrow = TRUE),
+             matrix(c(0, 0,
+                      0.25, 0),
+                    nrow = 2,
+                    ncol = 2,
+                    byrow = TRUE))
+
+Sigma_a_1 <- matrix(c(0.09, 0,
+                      0, 0.04),
+                    nrow = 2,
+                    ncol = 2,
+                    byrow = TRUE)
+
+autocovariance_0 <- matrix(c(0.131, 0.066,
+                             0.066, 0.181),
+                     nrow = 2,
+                     ncol = 2,
+                     byrow = TRUE)
+
+autocovariance_1 <- matrix(c(0.072, 0.051,
+                             0.104, 0.143),
+                           nrow = 2,
+                           ncol = 2,
+                           byrow = TRUE)
+
+autocovariance_2 <- matrix(c(0.046, 0.040,
+                             0.113, 0.108),
+                           nrow = 2,
+                           ncol = 2,
+                           byrow = TRUE)
+
+autocovariance_3 <- matrix(c(0.035, 0.031,
+                             0.093, 0.083),
+                           nrow = 2,
+                           ncol = 2,
+                           byrow = TRUE)
+
+test_that("Check autocovariances", {
+  expect_equal(round(create_var(cm_1, Sigma_a_1, 1001)$autocovariance[['0']], 3),
+               autocovariance_0)
+  expect_equal(round(create_var(cm_1, Sigma_a_1, 1001)$autocovariance[['1']], 3),
+               autocovariance_1)
+  expect_equal(round(create_var(cm_1, Sigma_a_1, 1001)$autocovariance[['2']], 3),
+               autocovariance_2)
+  expect_equal(round(create_var(cm_1, Sigma_a_1, 1001)$autocovariance[['3']], 3),
+               autocovariance_3)
+})
+
+test_that("Check reproducability of results", {
+  expect_equal(round(create_var(cm_1, Sigma_a_1, 1001)$z[100, ], 7),
+               c(0.2554283, -0.3114040))
+  expect_equal(round(create_var(cm_1, Sigma_a_1, 1001, seed = 100)$z[100, ], 7),
+               c(-0.4943526, 0.8541217))
+})
+
+

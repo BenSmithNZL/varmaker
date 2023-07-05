@@ -2,44 +2,52 @@
 % Please edit documentation in R/create_var.R
 \name{create_var}
 \alias{create_var}
-\title{Simulate observations from a VAR.}
+\title{Simulate observations from a VAR(H).}
 \usage{
-create_var(coefficient_matrices, Sigma_a, n, seed = 56143868)
+create_var(phi, Sigma_a, n, seed = 56143868, burn_ins = 500)
 }
 \arguments{
-\item{coefficient_matrices}{A list of the coefficient matrices. The first element of the list corresponds to
-\eqn{\phi_0}, and must be a K-length vector. All following elements must be K-by-K matrices, with the second element corresponding to
-\eqn{\phi_1}, the third to \eqn{\phi_2}, and so on. Only \eqn{\phi_0} is required; all further coefficient matrices are optional.}
+\item{phi}{A list of the coefficient matrices.}
 
-\item{Sigma_a}{A K-by-K covariance matrix of the innovations. Must be symmetrical.}
+\item{Sigma_a}{A K-by-K covariance matrix of the innovations..}
 
 \item{n}{An integer of the number of periods.}
 
-\item{seed}{Seed for the random generation of the innovations. Seed is equal to 56143868 by default.}
+\item{seed}{Seed for the random generation of the innovations. Set to 56143868 by default.}
+
+\item{burn_ins}{The number of burn in observations to use. Set to 500 by default.}
 }
 \value{
 \code{create_var} returns a \code{\link[=list]{list()}} object with the following elements:
 \itemize{
-\item \code{a} is a n-by-K matrix of the innovations.
-\item \code{autocovariance} is a list of the autocovariances.
-\item \code{beta} is the matrix of coefficients.
-\item \code{burn_ins} is the number of burn-in observations used.
-\item \code{companion_matrix} is the coefficients in companion matrix form.
-\item \code{eigens} is list containing the eigenvalues and the moduli of the companion matrix.
-\item \code{H} is an integer for the number of lags in the VAR.
-\item \code{K} is an integer for the number of time series.
-\item \code{mu} is K-vector of the theoretical mean of the process.
-\item \code{n} is the number of periods.
-\item \code{stable} logical. If \code{TRUE} then the process is stable.
-\item \code{z} is the process itself.
+\item \code{a} Matrix of the innovations.
+\item \code{autocovariance} List of the theoretical autocovariances.
+\item \code{beta} Matrix of coefficients.
+\item \code{burn_ins} Integer of the number of burn-in observations used.
+\item \code{companion_matrix} Matrix of coefficients in companion form.
+\item \code{eigens} List containing the eigenvalues and the moduli of the companion matrix.
+\item \code{H} Integer for the order of the VAR.
+\item \code{K} Integer for the dimension of the VAR.
+\item \code{mu} Vector of the theoretical mean of the process.
+\item \code{n} Integer for the number of observations.
+\item \code{stable} Logical. If \code{TRUE} then the process is stable.
+\item \code{z} Matrix of the simulated observations.
 }
 }
 \description{
-Creates observations from the canonical VAR. \deqn{z_t = \phi_0 + \phi_1 z_{t-1} + \ldots + \phi_h z_{t-h} + a_t}
-where \eqn{a_t \sim N(0, \Sigma_a)}
+Simulate observations from the canonical VAR of order H and dimension K.
 }
 \details{
-There are a certain number of burn-ins that are used.
+This function simulates observations from the canonical VAR model of order H and dimension K. The model is given by:
+\deqn{z_t = \phi_0 + \phi_1 z_{t-1} + \ldots + \phi_H z_{t-H} + a_t}
+where \eqn{z_t} is a K-length vector, \eqn{\phi_0} is a K-length intercept vector, \eqn{\phi_h} is a K-by-K coefficient matrix, \eqn{a_t} is a K-length vector of innovations, and \eqn{a_t \sim N(0, \Sigma_a)}.
+
+The first element of \code{phi} corresponds to
+\eqn{\phi_0} and must be a K-length vector. All following elements must be K-by-K matrices, with the second element corresponding to
+\eqn{\phi_1}, the third to \eqn{\phi_2}, and so on. Only \eqn{\phi_0} is required; all further coefficient matrices are optional.
+\code{Sigma_a} must be symmetrical or else an error will be thrown.
+
+A certain number of burn-ins observations are used when simulation. These observations are discarded once the observations are generated.
 }
 \examples{
 create_var(list(c(1, 0.5, 0.25),

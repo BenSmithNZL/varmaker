@@ -1,9 +1,9 @@
 Package: varmaker
-Title: Creates a multivariate time series 
-Version: 0.0.1.0000
+Title: Simulate observations from the VAR framework
+Version: 0.9.0.0000
 Authors@R: 
     person("Ben", "Smith", , "bsmithnzl108@gmail.com", role = c("aut", "cre"))
-Description: Convenient functions to generate multivariate time series in the vector autoregressive framework.
+Description: Simulate observations from the VAR model.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
