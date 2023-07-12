@@ -19,7 +19,7 @@ devtools::install_github("BenSmithNZL/varmaker")
 
 ## VAR
 
-A VAR(2) with two series takes the form: $$ z_t = \phi_0 + \phi_1 z_{t_1}+ \phi_2 z_{t_2} + a_t$$with $a_t \sim N_2(0, \Sigma_a)$. As an example, we can set $\phi_0 = \begin{bmatrix} 2 \\ 0 \\ \end{bmatrix}, \phi_1 = \begin{bmatrix} 0.5 & 0.1 \\ 0.4 & 0.5 \\ \end{bmatrix}, \phi_2 = \begin{bmatrix} 0 & 0 \\ 0.25 & 0 \\ \end{bmatrix}$ and $\Sigma_a = \begin{bmatrix} 0.09 & 0 \\ 0 & 0.04 \\ \end{bmatrix}$. To simulate observations from this model, you can run:
+To simulate observations from a VAR(2) with two series, you can run:
 
 ``` r
 library(varmaker)
@@ -51,7 +51,7 @@ The object `data_1` contains the simulated observations themselves, along with t
 
 ## VMA
 
-A VMA(2) with two series takes the form: $$ z_t = \theta_0 + \theta_1 a_{t-1} + \theta_2 a_{t-2} + a_t$$with $a_t \sim N_2(0, \Sigma_a)$. As an example, we can set $\theta_0 = \begin{bmatrix} 2 \\ 0 \\ \end{bmatrix}, \theta_1 = \begin{bmatrix} 0.5 & 0.1 \\ 0.4 & 0.5 \\ \end{bmatrix}, \theta_2 = \begin{bmatrix} 0 & 0 \\ 0.25 & 0 \\ \end{bmatrix}$ and $\Sigma_a = \begin{bmatrix} 0.09 & 0 \\ 0 & 0.04 \\ \end{bmatrix}$. To simulate observations from this model, you can run:
+To simulate observations from a VMA(2) with two series, you can run:
 
 ``` r
 library(varmaker)
