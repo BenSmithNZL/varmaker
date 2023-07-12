@@ -1,6 +1,6 @@
 Package: varmaker
 Title: Simulate observations from the VAR framework
-Version: 0.9.0.0000
+Version: 1.0.0
 Authors@R: 
     person("Ben", "Smith", , "bsmithnzl108@gmail.com", role = c("aut", "cre"))
 Description: Simulate observations from the VAR model.

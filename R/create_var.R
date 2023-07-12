@@ -1,24 +1,29 @@
 #' Simulate observations from a VAR(H).
 #'
 #' Simulate observations from the canonical VAR of order H and dimension K.
+#' Theoretical properties of the process are also returned.
 #'
 #' @param phi A list of the coefficient matrices.
-#' @param Sigma_a A K-by-K covariance matrix of the innovations..
+#' @param Sigma_a A K-by-K covariance matrix of the innovations.
 #' @param n An integer of the number of periods.
 #' @param seed Seed for the random generation of the innovations. Set to 56143868 by default.
 #' @param burn_ins The number of burn in observations to use. Set to 500 by default.
 #'
 #' @return \code{create_var} returns a [list()] object with the following elements:
 #' * \code{a} Matrix of the innovations.
+#' * \code{autocorrelations} List of the theoretical autocorrelations.
 #' * \code{autocovariance} List of the theoretical autocovariances.
 #' * \code{beta} Matrix of coefficients.
 #' * \code{burn_ins} Integer of the number of burn-in observations used.
 #' * \code{companion_matrix} Matrix of coefficients in companion form.
 #' * \code{eigens} List containing the eigenvalues and the moduli of the companion matrix.
+#' * \code{granger_causality} Matrix showing the Granger-causalities between the series.
 #' * \code{H} Integer for the order of the VAR.
 #' * \code{K} Integer for the dimension of the VAR.
 #' * \code{mu} Vector of the theoretical mean of the process.
 #' * \code{n} Integer for the number of observations.
+#' * \code{phi} List containing the coefficients used.
+#' * \code{Sigma_a} Matrix of the covariances of the innovations.
 #' * \code{stable} Logical. If \code{TRUE} then the process is stable.
 #' * \code{z} Matrix of the simulated observations.
 #'
@@ -35,6 +40,8 @@
 #' \code{Sigma_a} must be symmetrical or else an error will be thrown.
 #'
 #' A certain number of burn-ins observations are used when simulation. These observations are discarded once the observations are generated.
+#'
+#' The autocovariances and autocorrelations are calculated to a maximum lag of \eqn{10 * log_10(n/K)}.
 #'
 #'
 #' @examples
@@ -59,11 +66,11 @@
 #'                     byrow = TRUE),
 #'            1000)
 #' @references Lütkepohl, H. (2005) \emph{New Introduction to Multiple Time Series Analysis.} Springer.
+#' @references Tsay, R. (2014) \emph{Multivariate Time Series Analysis With R and Financial Applications.} Wiley.
 create_var <- function(phi, Sigma_a, n, seed = 56143868, burn_ins = 500){
 
   K = length(phi[[1]])
   H = length(phi) - 1
-  max_autocovariance = 12
 
   #### Checks ####
   # Check if seed is an integer
@@ -106,7 +113,7 @@ create_var <- function(phi, Sigma_a, n, seed = 56143868, burn_ins = 500){
   }
 
   # Check if they're all a K by K matrix
-  if (H > 1) {
+  if (H != 0) {
 
     for (h in 1:H) {
 
@@ -123,14 +130,14 @@ create_var <- function(phi, Sigma_a, n, seed = 56143868, burn_ins = 500){
   # Check if sigma is a K by K matrix
   if (isFALSE(all(dim(Sigma_a) == K))) {
 
-    stop("Sigma is not a K by K matrix.")
+    stop("Sigma_a is not a K by K matrix.")
 
   }
 
   # Check Sigma_a is symmetric
   if (isSymmetric(Sigma_a) == FALSE) {
 
-    stop("Sigma_a is not a symmetric matrix")
+    stop("Sigma_a is not a symmetric matrix.")
 
   }
 
@@ -165,7 +172,7 @@ create_var <- function(phi, Sigma_a, n, seed = 56143868, burn_ins = 500){
 
   }
 
-  #### Eigenvalues and stability ####
+  #### Stability ####
   if (H == 0) {
 
     eigens = NULL
@@ -190,7 +197,7 @@ create_var <- function(phi, Sigma_a, n, seed = 56143868, burn_ins = 500){
 
   }
 
-  #### Simulate observations ####
+  #### Simulation ####
   a = MASS::mvrnorm(n = n + burn_ins, mu = rep(0, K), Sigma_a)
   z = matrix(0, nrow = n + burn_ins, ncol = K)
 
@@ -225,7 +232,7 @@ create_var <- function(phi, Sigma_a, n, seed = 56143868, burn_ins = 500){
   rownames(a) <- 1:n
   rownames(z) <- 1:n
 
-  #### Beta coefficient matrix ####
+  #### Beta ####
   beta = t(phi[[1]])
 
   if (H > 0) {
@@ -235,6 +242,25 @@ create_var <- function(phi, Sigma_a, n, seed = 56143868, burn_ins = 500){
       beta = rbind(beta, phi[[h+1]])
 
     }
+
+  }
+
+  #### Granger causality ####
+  if (H == 0) {
+
+    granger_causality <- NULL
+
+  } else {
+
+    granger_causality <- matrix(FALSE, nrow = K, ncol = K, byrow = TRUE)
+
+    for (h in 1:H) {
+
+      granger_causality[which(phi[[h+1]] != 0)] <- TRUE
+
+    }
+
+    granger_causality <- t(granger_causality)
 
   }
 
@@ -260,51 +286,77 @@ create_var <- function(phi, Sigma_a, n, seed = 56143868, burn_ins = 500){
 
   #### Autocovariance ####
 
+  max_autocovariance = round(10 * log10(n/K), 0)
+
   if (H == 0) {
 
     autocovariance = NULL
 
   } else {
 
-    Sigma_A = matrix(data = 0,
-                     nrow = K*H,
-                     ncol = K*H)
-
+    Sigma_A = matrix(data = 0, nrow = K*H, ncol = K*H)
     Sigma_A[1:K, 1:K] <- Sigma_a
     Gamma_Z_0 <- solve(diag(x = 1, nrow = (K*H)^2, ncol = (K*H)^2) - kronecker(companion_matrix, companion_matrix)) %*% c(Sigma_A)
     Gamma_Z_0 <- matrix(Gamma_Z_0, nrow = K*H, ncol = K*H, byrow = TRUE)
     autocovariance <- list()
 
-    for (h in 1:H) {
+    for (h in 1:min(H, max_autocovariance)) {
 
       autocovariance[[h]] <- Gamma_Z_0[1:K, (K*(h-1)+1):(K*h)]
 
     }
 
-    # Recursively finding autocovariances
-    for (g in (H+1):(max_autocovariance+1)) {
+    if (H + 1 <= max_autocovariance + 1) {
 
-      autocovariance[[g]] <- matrix(data = 0, nrow = K, ncol = K)
+      for (g in (H+1):(max_autocovariance+1)) { #Recursively finding autocovariances
 
-      for (h in 1:H) {
+        autocovariance[[g]] <- matrix(data = 0, nrow = K, ncol = K)
 
-        autocovariance[[g]] <- autocovariance[[g]] + phi[[h+1]] %*% autocovariance[[g-h]]
+        for (h in 1:H) {
+
+          autocovariance[[g]] <- autocovariance[[g]] + phi[[h+1]] %*% autocovariance[[g-h]]
+
+        }
 
       }
 
     }
 
-    names(autocovariance) <- 0:max_autocovariance
+    names(autocovariance) <- paste0('Gamma_', 0:(length(autocovariance) - 1))
 
   }
 
-  #### Return output ####
+  #### Autocorrelation ####
+
+  if (H == 0) {
+
+    autocorrelation = NULL
+
+  } else {
+
+    autocorrelation <- list()
+
+    D_inverse <- solve(sqrt(diag(diag(autocovariance[[1]]), K, K)))
+
+    for (g in 1:length(autocovariance)) {
+
+      autocorrelation[[g]] <- D_inverse %*% autocovariance[[g]] %*% D_inverse
+
+    }
+
+    names(autocorrelation) <- paste0('R_', 0:(length(autocorrelation) - 1))
+
+  }
+
+  #### Output ####
   return(list(a = a,
+              autocorrelation = autocorrelation,
               autocovariance = autocovariance,
               beta = beta,
               burn_ins = burn_ins,
               companion_matrix = companion_matrix,
               eigens = eigens,
+              granger_causality = granger_causality,
               H = H,
               K = K,
               mu = mu,
