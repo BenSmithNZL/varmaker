@@ -5,13 +5,13 @@ Authors@R:
     person("Ben", "Smith", , "bsmithnzl108@gmail.com", role = c("aut", "cre"))
 Description: Simulate observations from the VAR model.
 License: MIT + file LICENSE
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+Imports: 
+    MASS,
+    matrixcalc,
+    utils
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-Imports: 
-    MASS,
-    stringr,
-    utils
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
